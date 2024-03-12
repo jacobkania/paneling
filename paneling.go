@@ -12,6 +12,14 @@ const (
 	HORIZONTAL direction = "horizontal"
 )
 
+// Grid represents a single grid element which can contain either parent grids or content.
+// It defines the basic structure for creating complex, nested grid layouts with specific dimensions and orientations.
+//
+// Fields:
+// - Width: The width of the grid. Can be absolute (for parent grids) or relative (for child grids).
+// - Height: The height of the grid. Can be absolute (for parent grids) or relative (for child grids).
+// - Direction: The layout direction of child grids. Can be either VERTICAL or HORIZONTAL.
+// - Content: The text content of the grid. Used only if the grid does not contain any child grids.
 type Grid struct {
 	Width     int64 // absolute on parent, relative on children
 	Height    int64 // absolute on parent, relative on children
@@ -38,8 +46,16 @@ func (g *Grid) safeHeight() int64 {
 	return g.Height
 }
 
-// NewGrid creates a new grid with the given width, height and direction
-// This type of grid is used for containing children
+// NewGrid creates a new grid with the given width, height, and direction. 
+// This grid can contain child grids and is primarily used for layout purposes rather than directly holding content.
+//
+// Parameters:
+// - width: The width of the grid. Must be a positive integer.
+// - height: The height of the grid. Must be a positive integer.
+// - direction: The direction that child grids should be laid out in (either VERTICAL or HORIZONTAL).
+//
+// Returns:
+// - *Grid: The new Grid instance.
 func NewGrid(width, height int64, direction direction) *Grid {
 	return &Grid{
 		Width:     width,
@@ -48,8 +64,15 @@ func NewGrid(width, height int64, direction direction) *Grid {
 	}
 }
 
-// NewChild creates a new grid with the given width, height and content
-// This type of grid is used for containing content
+// NewChild creates a new grid intended to directly contain content, with specified width and height.
+//
+// Parameters:
+// - width: The WEIGHTED RELATIVE width of the grid. Must be a positive integer.
+// - height: The WEIGHTED RELATIVE height of the grid. Must be a positive integer.
+// - content: A string containing the content to be displayed in the grid.
+//
+// Returns:
+// - *Grid: The new Grid instance.
 func NewChild(width, height int64, content string) *Grid {
 	return &Grid{
 		Width:   width,
@@ -58,12 +81,24 @@ func NewChild(width, height int64, content string) *Grid {
 	}
 }
 
+// AddChild adds a child grid to the current grid. This is how nested layouts are created.
+//
+// Parameters:
+// - child: A pointer to the Grid instance that should be added as a child of the current grid.
+//
+// Returns:
+// - *Grid: A pointer to the current Grid instance, allowing for method chaining.
 func (g *Grid) AddChild(child *Grid) *Grid {
 	g.children = append(g.children, child)
 
 	return g
 }
 
+// Render converts the entire grid layout, including all nested child grids and content, into a single string representation.
+// This representation respects the dimensions and layout directions specified for each grid and child grid.
+//
+// Returns:
+// - string: The rendered output of the grid layout as a string, ready to be displayed or further processed.
 func (g *Grid) Render() string {
 	return strings.Join(g.render(0, 0), "\n")
 }
