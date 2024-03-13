@@ -20,6 +20,22 @@ func TestSplitLongLine(t *testing.T) {
 			},
 			want: []string{"This is a", "very long", "line that", "needs to", "be split", "into", "smaller", "lines."},
 		},
+		{
+			name: "Handle a really long word",
+			args: args{
+				line:  "Thisisaverylongwordthatislongerthantheallowedwidth",
+				width: 10,
+			},
+			want: []string{"Thisisaver"},
+		},
+		{
+			name: "Handle a single word",
+			args: args{
+				line:  "Hello",
+				width: 10,
+			},
+			want: []string{"Hello"},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

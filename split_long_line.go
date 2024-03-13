@@ -23,8 +23,10 @@ func SplitLongLine(line string, width int) []string {
 		}
 
 		// whenever the line is full
-		result = append(result, strings.TrimSpace(lineBuf))
-		lineBuf = ""
+		if len(lineBuf) > 0 {
+			result = append(result, strings.TrimSpace(lineBuf))
+			lineBuf = ""
+		}
 
 		// The word didn't fit in the last line
 		if len(words[i]) > width { // if the word is longer than an entire line
